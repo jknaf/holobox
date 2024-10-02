@@ -1,0 +1,39 @@
+import processing.video.*;
+
+Movie mainVideo, secondaryVideo; // Haupt- und Zweitvideo
+boolean playMainVideo = true; // Zustand des aktuell abgespielten Videos
+
+// Interaktiver Bereich
+int areaX = 150, areaY = 100, areaWidth = 100, areaHeight = 100;
+
+void setup() {
+  size(1280, 756);
+  mainVideo = new Movie(this, "/Users/joachimknaf/LRZ Sync+Share/00_MUC/06_Forschung/01_High_Tech_Agenda/04-Test_Video_Holoboard/Test_Mai24/h264Aufnahme_060524.mov");
+  secondaryVideo = new Movie(this, "/Users/joachimknaf/LRZ Sync+Share/00_MUC/06_Forschung/01_High_Tech_Agenda/04-Test_Video_Holoboard/Test_Mai24/h264Aufnahme2_060524.mov");
+  mainVideo.loop();
+}
+
+void draw() {
+  if (mainVideo.available()) mainVideo.read();
+  if (secondaryVideo.available()) secondaryVideo.read();
+
+  image(playMainVideo ? mainVideo : secondaryVideo, 0, 0, width, height);
+
+  // Interaktiven Bereich zeichnen
+  noFill();
+  stroke(255, 0, 0);
+  rect(areaX, areaY, areaWidth, areaHeight);
+}
+
+void mousePressed() {
+  if (mouseX > areaX && mouseX < areaX + areaWidth && mouseY > areaY && mouseY < areaY + areaHeight) {
+    playMainVideo = !playMainVideo;
+    if (playMainVideo) {
+      secondaryVideo.stop();
+      mainVideo.loop();
+    } else {
+      mainVideo.stop();
+      secondaryVideo.loop();
+    }
+  }
+}
